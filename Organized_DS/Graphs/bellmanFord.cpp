@@ -10,20 +10,20 @@ class GraphList
     pairOfVectors g[100];
     int V;
     int dist[100];
-    bool finalized[100];
-
+    //bool finalized[100];
     public:
             GraphList(int vertices)
             {
                 V = vertices;
                 for(int i=0; i<V; i++)
                 dist[i] = max;
-                finalized[100] = {false};
+                //finalized[100] = {false};
             }
 
     void addEdges(int u, int v, int wt);
     void bellmanFord(int s);
-    void relax(int u, int adj, int wt);
+    bool relax(int u, int adj, int wt);
+    bool isNegativeCycle();
     void printList();
     void printDist();
 };
@@ -38,12 +38,11 @@ void GraphList::addEdges(int u, int v, int wt)
 
 void GraphList:: bellmanFord(int s)
 {
-    cout<<"Source="<<s<<"\n";
+    cout<<"Source = "<<s<<"\n";
     dist[s] = 0;
-    finalized[s]=true;   
+    bool isRelaxed;
+    //finalized[s]=true;   
     // pq.push(make_pair(dist[s],s));
-
-    cout<<"\n";
 
     for(int i=0; i < V-1; i++)
     {
@@ -51,26 +50,46 @@ void GraphList:: bellmanFord(int s)
         {
             for (int k = 0; k < g[j].first.size(); k++)
             {
-                relax(j, g[j].first[k], g[j].second[k]);
+                isRelaxed = relax(j, g[j].first[k], g[j].second[k]);
             }
         }
     }
 
-    cout<<"Entered\n";
+    //detect negative edge cycle
+    if(isNegativeCycle())
+        cout<<"\nThere Exist Negative weight cycle\n";
+
     printDist();    //print final distances from source(0) vertex
 }
 
-void GraphList:: relax(int u, int v, int wt)
+
+bool GraphList:: relax(int u, int v, int wt)
 {
     cout<<"Relaxing edge "<<u+1<<","<<v<<" Original weight = "<<wt<<" Current distance "<<dist[v-1]<<"\n";
     if(dist[v-1]>dist[u]+wt)
     {
-        // cout<<"Min edge"<<v<<"\n";
         dist[v-1] = dist[u]+wt;
         cout<<"Updated edge wt ="<<dist[v-1]<<"\n";
+        return true;
         // pq.push(make_pair(dist[v-1], v-1));
     }
-    
+
+    return false;
+}
+
+bool GraphList:: isNegativeCycle()
+{
+    for (int j = 0; j < V; j++)
+        {
+            for (int k = 0; k < g[j].first.size(); k++)
+            {
+                if(relax(j, g[j].first[k], g[j].second[k]));
+                {
+                   return true;
+                }
+            }
+        }
+        return false;
 }
 
 void GraphList:: printList()
@@ -93,14 +112,15 @@ void GraphList:: printDist()
     }
 }
 
+
 int main(){
     int src = 0, v = 5;
     GraphList graph(v);
  // cout<<"Src = "<<src;
     graph.addEdges(1,2,5);
-    graph.addEdges(3,5,10);
+    graph.addEdges(5,3,10);
     graph.addEdges(2,5,4);
-    graph.addEdges(1,3,8);
+    graph.addEdges(3,1,-3);
     graph.addEdges(2,4,7);
     graph.printList();
     graph.bellmanFord(src);
