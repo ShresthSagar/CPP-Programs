@@ -3,11 +3,11 @@ using namespace std;
 int ans[5][5] = { {0,0,0,0,0}, {0,0,0,0,0}, {0,0,0,0,0}, {0,0,0,0,0}, {0,0,0,0,0}};
 int ratMaze(int maze[][5], int n, int i, int j)
 {
-    int ret;
+    bool ret;
     if(i==n-1 && j==n-1)
     {
         ans[i][j] = 1;
-        return 1;
+        return true;
     }
 //   cout<<"\ni="<<i<<" j="<<j<<endl;
     if(i+1 < n && maze[i+1][j])
@@ -30,7 +30,7 @@ int ratMaze(int maze[][5], int n, int i, int j)
     }
 
     cout<<"Returned 0 by "<<i<<" "<<j<<"\n";
-    return 0;   
+    return false;   
 
 }
 
